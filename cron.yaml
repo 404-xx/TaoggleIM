@@ -1,0 +1,7 @@
+cron:
+- description: sweeping cached items every day
+  url: /tasks/sweeping/items
+  schedule: every 60 minutes
+- description: sweeping shorted urls every month
+  url: /tasks/sweeping/urls
+  schedule: every 24 hours
