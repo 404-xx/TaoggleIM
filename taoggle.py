@@ -16,9 +16,9 @@ from google.appengine.ext.ereporter import report_generator
 from google.appengine.ext.webapp import xmpp_handlers
 
 
-WELCOME_MSG = ("Hi, 我是淘宝搜索机器人—— *_淘哥_* 。"
+WELCOME_MSG = ("Hi, 我是淘宝搜索机器人—— *淘哥* 。"
                "想买什么, 让哥来淘, 您再挑！"
-               "发消息告诉我您想要购买的 *_宝贝名称_* , 我会立刻呈现淘宝网上关于该宝贝的搜索结果给您。"
+               "发消息告诉我您想要购买的 *宝贝名称* , 我会立刻呈现淘宝网上关于该宝贝的搜索结果给您。"
                "还不快来试试手气? PS: 输入 */help* 可以查看详细的帮助信息哦！\n\n"
                "若您有任何疑问或好的建议可以在Twitter上给我留言. - http://twitter.com/l404")
 HELP_MSG = ("哥淘的不是宝, 是乐趣~ %s")
