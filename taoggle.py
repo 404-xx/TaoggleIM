@@ -22,6 +22,7 @@ WELCOME_MSG = ("Hi, 我是淘宝搜索机器人—— *淘哥* 。"
                "还不快来试试手气? PS: 输入 */help* 可以查看详细的帮助信息哦！\n\n"
                "若您有任何疑问或好的建议可以在Twitter上给我留言. - http://twitter.com/l404")
 HELP_MSG = ("哥淘的不是宝, 是乐趣~ %s")
+WAIT_MSG = "正在帮您搜索 *%s*, 请稍候... \n\n"
 TAOBAOKE_ITEM_TEMPLATE = ("_%s_. %s ￥_%s_ 元 %s \n\n")
 SEARCH_MORE_TEAMPLE = (">>上淘宝网搜索 *%s* : %s")
 TAOBAOKE_NICK = '淘江山更淘美人'
@@ -96,6 +97,7 @@ class XmppHandler(xmpp_handlers.CommandHandler):
     
   def text_message(self, message=None):
     keyword = message.arg.strip()
+    message.reply(WAIT_MSG % keyword.encode('utf-8'))
     response = Taoggle.search(keyword)
     message.reply(response)
 
