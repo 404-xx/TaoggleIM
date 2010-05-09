@@ -8,7 +8,6 @@ import hashlib
 import urllib
 import urllib2
 
-
 def get(**with_given_params):
   req = OpenTaobao(with_given_params)
   return req.get()
@@ -25,8 +24,9 @@ class OpenTaobao:
     self.__api_secret = TOP_ACCOUNT_TOKEN
     self.__config_options = {
       'api_key':TOP_ACCOUNT_SID,
-      'format':TOP_OUTPUT_FORMAT,
-      'v':TOP_API_VERSION,
+      'format':'json',
+      'v':'2.0',
+      'sign_method':'md5',
       'timestamp':time.strftime('%Y-%m-%d %X', time.localtime())
     }
     self.__sign_options = self.__config_options.copy()
@@ -38,7 +38,7 @@ class OpenTaobao:
     return dict
   
   def __generate_sign(self):
-    param_string = self.__api_secret + ''.join(["%s%s" % (k,v) for k,v in sorted(self.__sign_options.items())])
+    param_string = self.__api_secret + ''.join(["%s%s" % (k,v) for k,v in sorted(self.__sign_options.items())]) + self.__api_secret
     md5 = hashlib.md5()
     md5.update(param_string)
     return md5.hexdigest().upper()
@@ -60,9 +60,7 @@ class OpenTaobao:
     # converting XML to python dicts
     # if self.__config_options['format'] == 'xml':
     data = eval(data)
-    if data.has_key('rsp'):
-      data = data["rsp"]
-    elif data.has_key('error_rsp'):
-      data = data["error_rsp"]
+    if data.has_key('error_response'):
+      data = data["error_response"]
       data = "Error %s: %s" % (data["code"], data["msg"])
     return data

@@ -25,8 +25,7 @@ HELP_MSG = ("哥淘的不是宝, 是乐趣~ %s")
 WAIT_MSG = "正在帮您搜索 *%s*, 请稍候... \n\n"
 TAOBAOKE_ITEM_TEMPLATE = ("_%s_. %s ￥_%s_ 元 %s \n\n")
 SEARCH_MORE_TEAMPLE = (">>上淘宝网搜索 *%s* : %s")
-TAOBAOKE_NICK = '淘江山更淘美人'
-
+TOP_TAOBAOKE_NICK = '淘江山更淘美人'
 
 class GooURL(db.Model):
   item_id = db.StringProperty(required=True)
@@ -54,15 +53,16 @@ class Taoggle():
       search_result = taobao.get(method = 'taobao.taobaoke.items.get', \
                                  fields = 'iid,click_url,title,price', \
                                  keyword = utf8_keyword, \
-                                 nick = TAOBAOKE_NICK, \
-                                 is_guarantee = 'true', \
+                                 nick = TOP_TAOBAOKE_NICK, \
+                                 guarantee = 'true', \
                                  sort = 'credit_desc', \
                                  page_no = '1', \
                                  page_size = '10')
-      search_results = sorted(search_result["taobaokeItems"], key=lambda i: float(i["price"]))
+      search_results = search_result["taobaoke_items_get_response"]["taobaoke_items"]["taobaoke_item"]
+      search_results = sorted(search_results, key=lambda i: float(i["price"]))
       result = Taoggle._parse_search_result(search_results)
-      list_result = taobao.get(method='taobao.taobaoke.listurl.get', q=keyword, nick=TAOBAOKE_NICK, outer_code='tg')
-      list_url = list_result["taobaokeItems"][0]["list_url_by_q"]
+      list_result = taobao.get(method='taobao.taobaoke.listurl.get', q=keyword, nick=TOP_TAOBAOKE_NICK, outer_code='tg')
+      list_url = list_result["taobaoke_listurl_get_response"]["taobaoke_item"]["keyword_click_url"]
       result += SEARCH_MORE_TEAMPLE % (utf8_keyword, googl.shortening(list_url),)
       item = KeyContent(keyword = keyword.lower(), content = result.decode('utf-8'))
       item.put()
@@ -74,12 +74,12 @@ class Taoggle():
     counter = 0
     for i in dataList:
       counter += 1
-      gurl = db.GqlQuery("SELECT * FROM GooURL WHERE item_id=:1", i["id"]).get()
+      gurl = db.GqlQuery("SELECT * FROM GooURL WHERE item_id=:1", i["iid"]).get()
       if gurl:
         shorted_url = gurl.url
       else:
         shorted_url = googl.shortening(i["click_url"])
-        gurl = GooURL(item_id=i["id"], url=shorted_url)
+        gurl = GooURL(item_id=i["iid"], url=shorted_url)
         gurl.put()
       e = TAOBAOKE_ITEM_TEMPLATE % (counter, Taoggle._format_title(i["title"]), i["price"], shorted_url.encode('utf-8'),)
       l.append(e)
